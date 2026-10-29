@@ -1,0 +1,64 @@
+<div class="wishlist-panel" (click)="$event.stopPropagation()">
+
+  <div class="wishlist-panel-header">
+    <div>
+      <p class="wishlist-eyebrow">HEIN SAVED</p>
+      <h2>Wishlist ({{ wishlistService.totalItems() }})</h2>
+    </div>
+
+    <button type="button" class="wishlist-close" (click)="onClose()" aria-label="Close wishlist">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  @if (wishlistService.items().length > 0) {
+
+    <div class="wishlist-items-list">
+      @for (product of wishlistService.items(); track product._id) {
+        <div class="wishlist-item">
+          <div class="item-img-wrapper" (click)="navigate('/products/' + product.slug)">
+            <img
+              [src]="staticURL + product.mainPic"
+              [alt]="product.name"
+              (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=140&q=80'"
+            />
+          </div>
+
+          <div class="item-details">
+            <h4 (click)="navigate('/products/' + product.slug)">{{ product.name }}</h4>
+            <p class="item-price">EGP {{ product.price }}</p>
+
+            <div class="item-actions">
+              <button type="button" class="btn-add-cart" (click)="moveToCart(product)">
+                <i class="bi bi-bag-plus"></i> Add to Cart
+              </button>
+
+              <button type="button" class="btn-remove" (click)="removeFromWishlist(product._id)" title="Remove from wishlist">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="wishlist-panel-footer">
+      <button type="button" class="btn-view-all" (click)="navigate('/wishlist')">
+        View Full Wishlist <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  } @else {
+
+    <div class="wishlist-empty-state">
+      <div class="empty-icon-circle">
+        <i class="bi bi-heart"></i>
+      </div>
+      <h3>Your wishlist is empty</h3>
+      <p>Save items you like so you can easily find and purchase them later.</p>
+
+      <button type="button" class="apple-btn-primary mt-3" (click)="navigate('/products')">
+        Explore Products
+      </button>
+    </div>
+  }
+</div>

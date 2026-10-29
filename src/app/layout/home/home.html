@@ -1,0 +1,168 @@
+<main class="home-page">
+
+  <section class="home-hero text-center">
+    <div class="container hero-content">
+      <p class="section-eyebrow">INTRODUCING THE NEW HEIN COLLECTION</p>
+
+      <h1 class="hero-title">
+        Less, but<br class="d-md-none" />
+        better.
+      </h1>
+
+      <div class="hero-actions">
+        <a routerLink="/products" class="btn store-btn store-btn-primary">
+          Explore Collection
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <img
+          src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=85"
+          alt="Minimalist lifestyle products arranged in a calm, modern setting"
+          class="hero-image"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-section promo-light text-center">
+    <div class="container promo-content">
+      <p class="section-eyebrow">DESIGNED FOR EVERY DAY</p>
+
+      <h2 class="promo-title">The art of<br />everyday living.</h2>
+
+      <p class="promo-description">
+        Everyday essentials, elevated through thoughtful design and attention to detail.
+      </p>
+
+      <a routerLink="/categories" class="text-link">
+        Explore categories
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+
+      <div class="promo-image-wrapper">
+        <img
+          src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1600&q=85"
+          alt="Calm contemporary interior with carefully selected home essentials"
+          class="promo-image"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-products-section">
+    <div class="container-fluid featured-products-container">
+
+      <div class="featured-heading">
+        <div>
+          <p class="section-eyebrow">CURATED FROM OUR CATALOG</p>
+          <h2 class="featured-title">Small things.<br />Big difference.</h2>
+          <p class="featured-description">
+            Discover the handcrafted pieces that make everyday life feel a little better.
+          </p>
+        </div>
+
+        <a routerLink="/products" class="btn store-btn store-btn-outline">
+          View All Products <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Loading featured essentials...</p>
+        </div>
+      } @else if (featuredProducts.length > 0) {
+        <div class="row g-4 mt-2">
+          @for (prod of featuredProducts; track prod._id) {
+            <div class="col-12 col-sm-6 col-lg-3">
+              <app-product-card [product]="prod"></app-product-card>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="text-center py-4 text-muted">
+          <p>No products available yet. Check back soon!</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="home-promo-grid">
+    <div class="container-fluid">
+      <div class="row g-3">
+
+        <div class="col-12 col-md-6">
+          <article class="home-promo-card promo-card-light">
+            <div class="home-promo-content">
+              <p class="section-eyebrow">THE MEN'S EDIT</p>
+
+              <h2 class="home-promo-title">Understated<br />comfort.</h2>
+
+              <p class="home-promo-description">Simple pieces that fit naturally into your everyday life.</p>
+
+              <a routerLink="/products/department/men" class="text-link">
+                Shop Men's
+                <i class="bi bi-arrow-up-right"></i>
+              </a>
+            </div>
+
+            <div class="home-promo-image-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85"
+                alt="Carefully selected everyday clothing and accessories"
+                class="home-promo-image"
+                loading="lazy"
+              />
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <article class="home-promo-card promo-card-dark">
+            <div class="home-promo-content">
+              <p class="section-eyebrow">TECH & AUDIO</p>
+
+              <h2 class="home-promo-title">Details make<br />the difference.</h2>
+
+              <p class="home-promo-description">
+                Immerse yourself in clean aesthetics and reliable performance.
+              </p>
+
+              <a routerLink="/products/category/electronics" class="text-link">
+                Explore Electronics
+                <i class="bi bi-arrow-up-right"></i>
+              </a>
+            </div>
+
+            <div class="home-promo-image-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=85"
+                alt="Minimal jewelry and accessories"
+                class="home-promo-image"
+                loading="lazy"
+              />
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-closing-section text-center">
+    <div class="container">
+      <p class="section-eyebrow">A MORE THOUGHTFUL WAY TO SHOP</p>
+
+      <h2 class="closing-title">Good design.<br />Better everyday.</h2>
+
+      <p class="closing-description">Find the things you'll love using, every single day.</p>
+
+      <a routerLink="/products" class="btn store-btn store-btn-primary">
+        Find Your Favorites
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+</main>

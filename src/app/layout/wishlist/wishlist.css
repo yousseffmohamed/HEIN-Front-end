@@ -1,0 +1,19 @@
+.wishlist-view-page {
+  background-color: var(--hein-bg);
+  min-height: calc(100vh - 150px);
+}
+
+.wishlist-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--hein-muted);
+  margin-bottom: 4px;
+}
+
+.wishlist-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--hein-text);
+  margin: 0 0 6px;
+}

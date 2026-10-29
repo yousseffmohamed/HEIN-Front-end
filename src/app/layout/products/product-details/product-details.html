@@ -1,0 +1,381 @@
+<main class="product-details-page">
+  @if (isLoading) {
+    <div class="text-center py-5 my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading product...</span>
+      </div>
+      <p class="mt-3 text-muted">Retrieving product details...</p>
+    </div>
+  } @else if (errorMessage || !selectedProduct) {
+    <div class="container py-5 text-center">
+      <div class="alert alert-warning p-4 rounded-3 d-inline-block">
+        <i class="bi bi-exclamation-circle fs-3 d-block mb-2 text-warning"></i>
+        <h3>Product Not Available</h3>
+        <p class="text-muted">{{ errorMessage || 'We could not find the requested product.' }}</p>
+        <a routerLink="/products" class="apple-btn-primary mt-2">
+          Back to All Products
+        </a>
+      </div>
+    </div>
+  } @else {
+
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/home">Home</a>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      <a routerLink="/products">Shop All</a>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      <a [routerLink]="['/products/category', selectedProduct.category ? selectedProduct.category[0] : 'all']">
+        {{ selectedProduct.category ? selectedProduct.category[0] : 'Products' | titlecase }}
+      </a>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      <span aria-current="page">{{ selectedProduct.name }}</span>
+    </nav>
+
+    <section class="product-overview">
+
+      <div class="product-gallery">
+        <div class="product-gallery-layout">
+
+          <div class="product-thumbnail-list" aria-label="Product images">
+
+            <button
+              type="button"
+              class="product-thumbnail"
+              [class.active]="activeImage === selectedProduct.mainPic"
+              (click)="setActiveImage(selectedProduct.mainPic)"
+            >
+              <img
+                [src]="staticURL + selectedProduct.mainPic"
+                [alt]="selectedProduct.name"
+                (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=150&q=80'"
+              />
+            </button>
+
+            @for (image of selectedProduct.images; track image) {
+              <button
+                type="button"
+                class="product-thumbnail"
+                [class.active]="activeImage === image"
+                (click)="setActiveImage(image)"
+              >
+                <img
+                  [src]="staticURL + image"
+                  [alt]="selectedProduct.name"
+                  (error)="$any($event.target).src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=150&q=80'"
+                />
+              </button>
+            }
+          </div>
+
+          <div class="product-gallery-main">
+            <div class="product-main-image">
+              @if (selectedProduct.stock > 0 && selectedProduct.stock <= 5) {
+                <span class="product-image-badge">Low Stock</span>
+              } @else if (selectedProduct.price >= 3000) {
+                <span class="product-image-badge">Premium Collection</span>
+              }
+
+              <img
+                [src]="staticURL + activeImage"
+                [alt]="selectedProduct.name"
+                (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'"
+              />
+            </div>
+          </div>
+        </div>
+
+        <p class="product-gallery-note">
+          <i class="bi bi-shield-check" aria-hidden="true"></i>
+          Authentic guaranteed. Sourced directly from manufacturers.
+        </p>
+      </div>
+
+      <div class="product-information">
+        <div class="product-brand-row">
+          <span class="product-brand">{{ selectedProduct.brand || 'HeIn Design' }}</span>
+        </div>
+
+        <h1 class="product-title">{{ selectedProduct.name }}</h1>
+
+        <p class="product-subtitle">{{ selectedProduct.description }}</p>
+
+        <div class="product-rating-summary">
+          <div class="product-stars">
+            @for (s of [1, 2, 3, 4, 5]; track s) {
+              <i class="bi" [class.bi-star-fill]="s <= averageRating" [class.bi-star]="s > averageRating"></i>
+            }
+          </div>
+
+          <span class="product-rating-value">{{ averageRating }}</span>
+          <a href="#product-reviews" class="product-review-link">{{ reviews.length }} reviews</a>
+          <span class="product-rating-divider"></span>
+          <span class="product-sold-count">In High Demand</span>
+        </div>
+
+        <div class="product-price-section">
+          <div class="product-price-row">
+            <span class="product-current-price">EGP {{ selectedProduct.price }}</span>
+          </div>
+
+          <p class="product-installment">
+            <i class="bi bi-credit-card" aria-hidden="true"></i>
+            Cash on delivery and instant card payments available at checkout.
+          </p>
+        </div>
+
+        <div class="product-section-divider"></div>
+
+        <div class="product-stock-status">
+          <span class="stock-indicator" [class.out-of-stock]="selectedProduct.stock === 0"></span>
+          @if (selectedProduct.stock === 0) {
+            <span class="text-danger fw-semibold">Out of Stock</span>
+          } @else if (selectedProduct.stock < 5) {
+            <span class="text-warning fw-semibold">Hurry Up, Only {{ selectedProduct.stock }} left in stock</span>
+            <span class="stock-separator">·</span>
+            <span>Ready to ship</span>
+          } @else {
+            <span class="text-success fw-semibold">In Stock ({{ selectedProduct.stock }} units)</span>
+            <span class="stock-separator">·</span>
+            <span>Ready to ship</span>
+          }
+        </div>
+
+        <div class="product-quantity-section">
+          <label class="product-option-label" for="product-quantity">Quantity</label>
+
+          <div class="product-quantity-control">
+            <button
+              type="button"
+              (click)="decreaseQty()"
+              [disabled]="quantity <= 1 || selectedProduct.stock === 0"
+              aria-label="Decrease quantity"
+            >
+              <i class="bi bi-dash" aria-hidden="true"></i>
+            </button>
+
+            <input
+              type="number"
+              id="product-quantity"
+              name="quantity"
+              [value]="quantity"
+              readonly
+              aria-label="Product quantity"
+            />
+
+            <button
+              type="button"
+              (click)="increaseQty()"
+              [disabled]="quantity >= selectedProduct.stock || selectedProduct.stock === 0"
+              aria-label="Increase quantity"
+            >
+              <i class="bi bi-plus" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <span class="product-quantity-limit">Max {{ selectedProduct.stock }} available</span>
+        </div>
+
+        <div class="product-purchase-actions">
+          <button
+            type="button"
+            class="product-add-to-cart"
+            [disabled]="selectedProduct.stock === 0"
+            (click)="addToCart()"
+          >
+            @if (addedToCart) {
+              <i class="bi bi-check-lg" aria-hidden="true"></i>
+              Added to Cart!
+            } @else {
+              <i class="bi bi-bag-plus" aria-hidden="true"></i>
+              Add to Cart
+            }
+          </button>
+
+          <button
+            type="button"
+            class="product-add-to-wishlist"
+            [class.active]="isInWishlist"
+            (click)="toggleWishlist()"
+            [title]="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'"
+          >
+            <i [class]="isInWishlist ? 'bi bi-heart-fill text-danger' : 'bi bi-heart'"></i>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="product-buy-now"
+          [disabled]="selectedProduct.stock === 0"
+          (click)="buyNow()"
+        >
+          Buy Now
+        </button>
+
+        <div class="product-delivery-card">
+          <div class="product-delivery-item">
+            <span class="product-delivery-icon">
+              <i class="bi bi-truck" aria-hidden="true"></i>
+            </span>
+            <div>
+              <h3>Fast Delivery</h3>
+              <p>Delivered within 2–4 business days across Egypt.</p>
+            </div>
+          </div>
+
+          <div class="product-delivery-item">
+            <span class="product-delivery-icon">
+              <i class="bi bi-shield-check" aria-hidden="true"></i>
+            </span>
+            <div>
+              <h3>Guaranteed Protection</h3>
+              <p>14-day hassle-free return and exchange policy.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="product-detail-sections">
+      <div class="product-detail-nav">
+        <a href="#product-description" class="product-detail-nav-link active">Description</a>
+        <a href="#product-reviews" class="product-detail-nav-link">Customer Reviews ({{ reviews.length }})</a>
+      </div>
+
+      <section class="product-detail-panel" id="product-description">
+        <div class="product-section-heading">
+          <span class="product-section-eyebrow">ABOUT THE PRODUCT</span>
+          <h2>Crafted for everyday living.</h2>
+          <p>{{ selectedProduct.description }}</p>
+        </div>
+
+        <div class="product-specifications-table mt-4">
+          <div class="product-specification-row"><span>Brand</span><span>{{ selectedProduct.brand || 'HeIn' }}</span></div>
+          <div class="product-specification-row"><span>Category</span><span>{{ selectedProduct.category.join(', ') }}</span></div>
+          <div class="product-specification-row"><span>Department</span><span>{{ selectedProduct.department || 'All' | titlecase }}</span></div>
+          <div class="product-specification-row"><span>SKU / Slug</span><span>{{ selectedProduct.slug }}</span></div>
+          <div class="product-specification-row"><span>Availability</span><span>{{ selectedProduct.stock > 0 ? 'In Stock' : 'Out of Stock' }}</span></div>
+        </div>
+      </section>
+
+      <section class="product-detail-panel product-reviews-panel" id="product-reviews">
+        <div class="product-section-heading">
+          <span class="product-section-eyebrow">CUSTOMER FEEDBACK</span>
+          <h2>Verified Customer Reviews</h2>
+          <p>Real feedback from shoppers who purchased this item.</p>
+        </div>
+
+        <div class="product-reviews-summary">
+          <div class="reviews-overall-rating">
+            <strong>{{ averageRating }}</strong>
+            <div class="product-stars">
+              @for (s of [1, 2, 3, 4, 5]; track s) {
+                <i class="bi" [class.bi-star-fill]="s <= averageRating" [class.bi-star]="s > averageRating"></i>
+              }
+            </div>
+            <span>Based on {{ reviews.length }} review{{ reviews.length === 1 ? '' : 's' }}</span>
+          </div>
+
+          <div class="reviews-write-action">
+            <h3>Leave a Review</h3>
+
+            @if (reviewSuccessMessage) {
+              <div class="alert alert-success py-2 px-3 small rounded-3 mb-3">
+                <i class="bi bi-check-circle me-1"></i> {{ reviewSuccessMessage }}
+              </div>
+            }
+
+            @if (reviewErrorMessage) {
+              <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                <i class="bi bi-exclamation-circle me-1"></i> {{ reviewErrorMessage }}
+              </div>
+            }
+
+            @if (!authService.isLoggedIn()) {
+              <div class="alert alert-light border small text-muted text-center py-3">
+                <i class="bi bi-person-lock me-1"></i>
+                Please <a routerLink="/login" class="fw-semibold text-decoration-underline text-dark">log in</a> to share your review on this product.
+              </div>
+            } @else {
+              <form [formGroup]="reviewForm" (submit)="submitReview()">
+                <div class="mb-3">
+                  <label class="form-label small text-muted">Rating</label>
+                  <select class="form-select form-select-sm" formControlName="rating">
+                    <option [value]="5">5 Stars — Excellent</option>
+                    <option [value]="4">4 Stars — Very Good</option>
+                    <option [value]="3">3 Stars — Average</option>
+                    <option [value]="2">2 Stars — Below Average</option>
+                    <option [value]="1">1 Star — Poor</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label small text-muted">Your Review</label>
+                  <textarea
+                    class="form-control form-control-sm"
+                    rows="3"
+                    placeholder="Share details of your experience with this item..."
+                    formControlName="text"
+                  ></textarea>
+
+                  @if (reviewForm.get('text')?.invalid && reviewForm.get('text')?.touched) {
+                    @if (reviewForm.get('text')?.errors?.['required']) {
+                      <p class="msg">Review text is required</p>
+                    }
+                    @if (reviewForm.get('text')?.errors?.['minlength']) {
+                      <p class="msg">Review must be at least 10 characters long</p>
+                    }
+                  }
+                </div>
+
+                <button type="submit" class="apple-btn-primary btn-sm" [disabled]="reviewForm.invalid || isSubmittingReview">
+                  {{ isSubmittingReview ? 'Submitting...' : 'Submit Review' }}
+                </button>
+              </form>
+            }
+          </div>
+        </div>
+
+        <div class="product-review-list mt-4">
+          @if (isLoadingReviews) {
+            <div class="text-center py-4 text-muted">
+              <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+              <span>Loading reviews...</span>
+            </div>
+          } @else {
+            @for (rev of reviews; track rev._id) {
+              <article class="product-review">
+                <div class="review-avatar">
+                  {{ rev.user.firstName ? rev.user.firstName.charAt(0).toUpperCase() : 'U' }}
+                </div>
+                <div class="review-content">
+                  <div class="review-author-row">
+                    <div>
+                      <h3>{{ rev.user.firstName ? (rev.user.firstName + ' ' + (rev.user.lastName || '')) : 'Verified Buyer' }}</h3>
+                      <span class="review-date">{{ rev.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                    <span class="verified-purchase">
+                      <i class="bi bi-patch-check-fill" aria-hidden="true"></i> Verified
+                    </span>
+                  </div>
+
+                  <div class="review-stars">
+                    @for (s of [1, 2, 3, 4, 5]; track s) {
+                      <i class="bi" [class.bi-star-fill]="s <= rev.rating" [class.bi-star]="s > rev.rating"></i>
+                    }
+                  </div>
+
+                  <p>{{ rev.comment }}</p>
+                </div>
+              </article>
+            } @empty {
+              <div class="text-center py-4 text-muted">
+                <i class="bi bi-chat-square-text fs-3 d-block mb-2"></i>
+                <p>No reviews yet for this product. Be the first to share your thoughts!</p>
+              </div>
+            }
+          }
+        </div>
+      </section>
+    </section>
+  }
+</main>

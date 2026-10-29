@@ -1,0 +1,16 @@
+.notfound-page {
+  background-color: var(--hein-bg);
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+}
+
+.notfound-code {
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: var(--hein-accent);
+  display: block;
+  line-height: 1;
+  margin-bottom: 12px;
+}

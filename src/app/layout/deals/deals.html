@@ -1,0 +1,119 @@
+<main class="deals-page">
+
+  <section class="deals-hero">
+    <div class="deals-container">
+      <p class="deals-eyebrow">HEIN EXCLUSIVE · LIMITED TIME OFFERS</p>
+      <h1>More to love.<br /><span>For less.</span></h1>
+      <p class="deals-hero-description">
+        Discover thoughtful finds, seasonal price drops, and special offers curated for modern living.
+      </p>
+
+      <div class="deals-hero-details">
+        <span>Verified genuine</span>
+        <span class="deals-detail-dot"></span>
+        <span>Special pricing</span>
+        <span class="deals-detail-dot"></span>
+        <span>Limited availability</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="deals-content-section" id="all-deals">
+    <div class="deals-container">
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-dark" role="status"></div>
+          <p class="small text-muted mt-3">Loading active promotions...</p>
+        </div>
+      } @else if (errorMessage) {
+        <div class="alert alert-danger d-flex align-items-center justify-content-between p-4 rounded-4 my-4">
+          <div>
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadDeals()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+          </button>
+        </div>
+      } @else if (deals.length === 0) {
+        <div class="deals-empty-card text-center py-5 my-4">
+          <div class="empty-icon-circle mx-auto mb-3">
+            <i class="bi bi-tag"></i>
+          </div>
+          <h2 class="fs-4 fw-bold mb-2">No Active Deals Right Now</h2>
+          <p class="text-muted small mb-4" style="max-width: 440px; margin: 0 auto;">
+            Our promotional offers refresh regularly. Check back soon for new flash drops, or explore our full product catalog today.
+          </p>
+          <a routerLink="/products" class="apple-btn-primary">
+            Explore All Products <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      } @else {
+        <div class="deals-grid">
+          @for (deal of deals; track deal._id) {
+            <article class="deal-card">
+
+              <div class="deal-badge-pill">
+                @if (deal.discountType === 'percentage') {
+                  <span>-{{ deal.discountValue }}% OFF</span>
+                } @else {
+                  <span>-EGP {{ deal.discountValue }} OFF</span>
+                }
+              </div>
+
+              <div class="deal-card-media">
+                <a [routerLink]="['/products', deal.product.slug]">
+                  <img
+                    [src]="staticURL + (deal.banner || deal.product.mainPic)"
+                    [alt]="deal.title"
+                    (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80'"
+                  />
+                </a>
+              </div>
+
+              <div class="deal-card-body">
+                <div class="deal-timing-pill">
+                  <i class="bi bi-clock me-1"></i> Ends {{ deal.endDate | date:'mediumDate' }}
+                </div>
+
+                <h3 class="deal-card-title">
+                  <a [routerLink]="['/products', deal.product.slug]" class="text-decoration-none text-dark">
+                    {{ deal.title }}
+                  </a>
+                </h3>
+
+                @if (deal.description) {
+                  <p class="deal-card-description">{{ deal.description }}</p>
+                }
+
+                <div class="deal-pricing-row">
+                  <span class="deal-discount-price">EGP {{ deal.discountPrice | number:'1.2-2' }}</span>
+                  <span class="deal-original-price">EGP {{ deal.originalPrice | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="deal-actions-row">
+                  <button
+                    type="button"
+                    class="deal-cart-btn"
+                    [class.added]="addedDealId === deal._id"
+                    (click)="addToCart(deal)"
+                  >
+                    @if (addedDealId === deal._id) {
+                      <i class="bi bi-check-lg me-1"></i> Added to Bag
+                    } @else {
+                      <i class="bi bi-bag-plus me-1"></i> Add to Bag
+                    }
+                  </button>
+
+                  <a [routerLink]="['/products', deal.product.slug]" class="deal-view-btn" title="View Product">
+                    <i class="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</main>

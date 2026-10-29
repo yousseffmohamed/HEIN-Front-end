@@ -1,0 +1,96 @@
+<main class="login-page">
+  <section class="login-container" aria-labelledby="login-title">
+
+    <a class="login-brand" routerLink="/home" aria-label="HeIn home">
+      <span class="login-brand-icon">
+        <i class="bi bi-bag-heart" aria-hidden="true"></i>
+      </span>
+      <span>HeIn</span>
+    </a>
+
+    <div class="login-heading">
+      <h1 id="login-title">Welcome back.</h1>
+      <p>Sign in to your account to continue shopping.</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="login-field">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          [class.input-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        />
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          @if (loginForm.get('email')?.errors?.['required']) {
+            <p class="msg">Email is required</p>
+          }
+          @if (loginForm.get('email')?.errors?.['email']) {
+            <p class="msg">Please enter a valid email address</p>
+          }
+        }
+      </div>
+
+      <div class="login-field">
+        <div class="login-password-label">
+          <label for="password">Password</label>
+        </div>
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          [class.input-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        />
+
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          @if (loginForm.get('password')?.errors?.['required']) {
+            <p class="msg">Password is required</p>
+          }
+        }
+      </div>
+
+      <div class="login-options">
+        <label class="remember-option" for="remember-me">
+          <input type="checkbox" id="remember-me" name="remember-me" formControlName="rememberMe" />
+          <span>Remember me</span>
+        </label>
+      </div>
+
+      <button type="submit" class="login-submit" [disabled]="isLoading">
+        @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Signing in...
+        } @else {
+          Sign In
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        }
+      </button>
+    </form>
+
+    <p class="login-register">
+      Don't have an account?
+      <a routerLink="/sign-up" class="login-text-link">Create an account</a>
+    </p>
+
+    <div class="login-footer">
+      <span>Simple shopping. Thoughtfully chosen.</span>
+    </div>
+  </section>
+</main>

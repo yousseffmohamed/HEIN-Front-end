@@ -1,0 +1,265 @@
+<div class="dash-card">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fs-5 fw-bold mb-1">Promotional Deals & Discounts ({{ deals.length }})</h2>
+      <p class="text-muted small mb-0">Manage flash deals, percentage discounts, scheduled promotions, and banners.</p>
+    </div>
+
+    <button type="button" class="dash-action-btn dark-btn" (click)="openCreateModal()">
+      <i class="bi bi-plus-lg me-1"></i> Create New Deal
+    </button>
+  </div>
+
+  @if (actionMessage) {
+    <div class="alert alert-success d-flex align-items-center p-3 rounded-4 mb-3">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <span>{{ actionMessage }}</span>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger d-flex align-items-center justify-content-between p-3 rounded-4 mb-3">
+      <div>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadDeals()">
+        <i class="bi bi-arrow-clockwise me-1"></i> Retry
+      </button>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark spinner-border-sm" role="status"></div>
+      <p class="small text-muted mt-2">Loading promotional deals...</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Product / Banner</th>
+            <th>Title</th>
+            <th>Discount</th>
+            <th>Price</th>
+            <th>Timeline</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (deal of deals; track deal._id) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <img
+                    [src]="getProductPic(deal)"
+                    [alt]="deal.title"
+                    class="dash-deal-thumb"
+                    (error)="$any($event.target).src='https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=100&q=80'"
+                  />
+                  <div>
+                    <strong>{{ getProductName(deal) }}</strong>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="fw-semibold">{{ deal.title }}</span>
+                @if (deal.description) {
+                  <span class="small text-muted d-block text-truncate" style="max-width: 200px;">
+                    {{ deal.description }}
+                  </span>
+                }
+              </td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger fw-bold px-2 py-1">
+                  @if (deal.discountType === 'percentage') {
+                    {{ deal.discountValue }}% OFF
+                  } @else {
+                    EGP {{ deal.discountValue }} OFF
+                  }
+                </span>
+              </td>
+              <td>
+                <div>
+                  <strong class="text-dark">EGP {{ deal.discountPrice }}</strong>
+                  <span class="text-muted text-decoration-line-through small d-block">
+                    EGP {{ deal.originalPrice }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="small text-muted">
+                  <span>{{ deal.startDate | date:'mediumDate' }}</span>
+                  <i class="bi bi-arrow-right mx-1"></i>
+                  <span>{{ deal.endDate | date:'mediumDate' }}</span>
+                </div>
+              </td>
+              <td>
+                @if (isExpired(deal)) {
+                  <span class="badge bg-secondary">Expired</span>
+                } @else if (deal.isActive) {
+                  <span class="badge bg-success">Active</span>
+                } @else {
+                  <span class="badge bg-warning text-dark">Paused</span>
+                }
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    (click)="toggleActive(deal)"
+                    [title]="deal.isActive ? 'Pause Deal' : 'Activate Deal'"
+                  >
+                    <i [class]="deal.isActive ? 'bi bi-pause-fill' : 'bi bi-play-fill'"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    (click)="openEditModal(deal)"
+                    title="Edit Deal"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light text-danger"
+                    (click)="deleteDeal(deal._id)"
+                    title="Delete Deal"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <i class="bi bi-tag fs-1 d-block mb-2 text-muted"></i>
+                <p class="mb-2 fw-semibold">No promotional deals scheduled yet</p>
+                <button type="button" class="dash-action-btn dark-btn btn-sm" (click)="openCreateModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Create Your First Deal
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (showModal) {
+  <div class="dash-modal-backdrop" (click)="closeModal()">
+    <div class="dash-modal-window" (click)="$event.stopPropagation()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fs-5 fw-bold mb-0">{{ modalTitle }}</h3>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="dealForm" (ngSubmit)="saveDeal()">
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Deal Title *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="title"
+            placeholder="e.g. Flash Weekend Tech Sale"
+          />
+          @if (dealForm.get('title')?.invalid && dealForm.get('title')?.touched) {
+            <span class="text-danger small">Title is required (min 3 characters).</span>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Target Product *</label>
+          <select class="form-select form-select-sm" formControlName="productId">
+            <option value="" disabled>Select a catalog product</option>
+            @for (p of products; track p._id) {
+              <option [value]="p._id">{{ p.name }} (Current Price: EGP {{ p.price }})</option>
+            }
+          </select>
+          @if (dealForm.get('productId')?.invalid && dealForm.get('productId')?.touched) {
+            <span class="text-danger small">Associated product is required.</span>
+          }
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Discount Type *</label>
+            <select class="form-select form-select-sm" formControlName="discountType">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (EGP)</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Discount Value *</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              formControlName="discountValue"
+              placeholder="e.g. 20"
+            />
+            @if (dealForm.get('discountValue')?.invalid && dealForm.get('discountValue')?.touched) {
+              <span class="text-danger small">Valid discount value is required.</span>
+            }
+          </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Start Date *</label>
+            <input type="date" class="form-control form-control-sm" formControlName="startDate" />
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold">End Date *</label>
+            <input type="date" class="form-control form-control-sm" formControlName="endDate" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Description (Optional)</label>
+          <textarea
+            class="form-control form-control-sm"
+            rows="2"
+            formControlName="description"
+            placeholder="Highlight promotional perks, limited-time conditions..."
+          ></textarea>
+        </div>
+
+        <div class="form-check form-switch mb-4">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="dealIsActive"
+            formControlName="isActive"
+          />
+          <label class="form-check-label small fw-semibold" for="dealIsActive">
+            Activate Deal Immediately
+          </label>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-sm btn-light" (click)="closeModal()">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="dash-action-btn dark-btn btn-sm"
+            [disabled]="dealForm.invalid || isSaving"
+          >
+            @if (isSaving) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              Saving...
+            } @else {
+              <i class="bi bi-check-lg me-1"></i>
+              Save Deal
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

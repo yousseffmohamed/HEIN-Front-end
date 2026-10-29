@@ -1,0 +1,39 @@
+<main class="wishlist-view-page">
+  <div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <p class="wishlist-eyebrow">YOUR COLLECTION</p>
+        <h1 class="wishlist-title">Saved Items ({{ wishlistService.totalItems() }})</h1>
+        <p class="text-muted">Items saved to your wishlist will stay here until you remove them or add them to your bag.</p>
+      </div>
+
+      @if (wishlistService.items().length > 0) {
+        <button type="button" class="apple-btn-outline" (click)="addAllToCart()">
+          <i class="bi bi-bag-plus"></i> Move All to Bag
+        </button>
+      }
+    </div>
+
+    @if (wishlistService.items().length > 0) {
+      <div class="row g-4">
+        @for (product of wishlistService.items(); track product._id) {
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <app-product-card [product]="product"></app-product-card>
+          </div>
+        }
+      </div>
+    } @else {
+
+      <div class="apple-card p-5 text-center my-4">
+        <div class="empty-icon-circle mx-auto mb-3">
+          <i class="bi bi-heart fs-1 text-muted"></i>
+        </div>
+        <h2 class="fs-4 fw-bold">Your wishlist is empty</h2>
+        <p class="text-muted mb-4">Save products you want to keep an eye on while you browse.</p>
+        <a routerLink="/products" class="apple-btn-primary">
+          Discover Products
+        </a>
+      </div>
+    }
+  </div>
+</main>

@@ -1,0 +1,204 @@
+<div class="dash-hero-heading">
+  <h1>Good morning, {{ authService.currentUser()?.firstName || 'Administrator' }}</h1>
+  <p>Stay on top of your store tasks, monitor progress, and track status.</p>
+</div>
+
+<div class="dash-grid-layout">
+
+  <div class="dash-card balance-card">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="card-eyebrow">Total Store Revenue</span>
+      <span class="currency-pill">
+        <i class="bi bi-currency-exchange me-1"></i> EGP
+      </span>
+    </div>
+
+    <div class="balance-display mb-3">
+      @if (totalRevenue > 0) {
+        <h2>EGP {{ totalRevenue | number:'1.2-2' }}</h2>
+        <span class="growth-badge">
+          <i class="bi bi-check-circle-fill me-1"></i> {{ totalOrdersCount }} orders processed
+        </span>
+      } @else {
+        <h2>EGP 0.00</h2>
+        <span class="growth-badge empty-badge">
+          <i class="bi bi-info-circle me-1"></i> No sales revenue yet
+        </span>
+      }
+    </div>
+
+    <div class="d-flex gap-2 mb-4">
+      <a routerLink="/dashboard/products" class="dash-action-btn dark-btn">
+        <i class="bi bi-plus-lg me-1"></i> Add Product
+      </a>
+      <a routerLink="/dashboard/orders" class="dash-action-btn light-btn">
+        <i class="bi bi-receipt me-1"></i> View Orders
+      </a>
+    </div>
+
+    <div class="wallets-row">
+      <div class="wallet-stat">
+        <span class="wallet-currency">Catalog Items</span>
+        <span class="wallet-val">{{ totalProductsCount }} Active</span>
+        <span class="wallet-tag" [class.active]="totalProductsCount > 0">
+          {{ totalProductsCount > 0 ? 'In Stock' : 'Empty Catalog' }}
+        </span>
+      </div>
+      <div class="wallet-stat">
+        <span class="wallet-currency">Orders Placed</span>
+        <span class="wallet-val">{{ totalOrdersCount }} Orders</span>
+        <span class="wallet-tag" [class.active]="totalOrdersCount > 0">
+          {{ totalOrdersCount > 0 ? 'Processed' : 'No Orders' }}
+        </span>
+      </div>
+      <div class="wallet-stat">
+        <span class="wallet-currency">Customers</span>
+        <span class="wallet-val">{{ totalCustomersCount }} Users</span>
+        <span class="wallet-tag" [class.active]="totalCustomersCount > 0">
+          {{ totalCustomersCount > 0 ? 'Registered' : 'None' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card stats-cluster-card">
+    <div class="stats-2x2">
+
+      <div class="stat-mini-card teal-box">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="stat-mini-label">Delivered Revenue</span>
+          <i class="bi bi-check2-circle"></i>
+        </div>
+        <h3 class="stat-mini-val">EGP {{ deliveredRevenue | number:'1.2-2' }}</h3>
+        <span class="pill-growth-light">
+          {{ deliveredOrdersCount > 0 ? (deliveredOrdersCount + ' orders delivered') : 'No delivered orders' }}
+        </span>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="stat-mini-label">In-Progress Value</span>
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+        <h3 class="stat-mini-val">EGP {{ pendingRevenue | number:'1.2-2' }}</h3>
+        <span class="pill-growth-orange">
+          {{ pendingOrdersCount > 0 ? (pendingOrdersCount + ' active orders') : 'No pending orders' }}
+        </span>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="stat-mini-label">Average Order Value</span>
+          <i class="bi bi-calculator"></i>
+        </div>
+        <h3 class="stat-mini-val">EGP {{ averageOrderValue | number:'1.2-2' }}</h3>
+        <span class="pill-growth-green">
+          {{ totalOrdersCount > 0 ? ('Across ' + totalOrdersCount + ' orders') : 'No orders yet' }}
+        </span>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="stat-mini-label">Items Sold</span>
+          <i class="bi bi-bag-check-fill"></i>
+        </div>
+        <h3 class="stat-mini-val">{{ totalUnitsSold | number }}</h3>
+        <span class="pill-growth-green">
+          {{ totalUnitsSold > 0 ? 'Units ordered' : 'No units sold yet' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card chart-card">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <span class="card-eyebrow">Monthly Sales</span>
+        <p class="small text-muted mb-0">Revenue & order frequency</p>
+      </div>
+      @if (totalOrdersCount > 0 && maxMonthlyRevenue > 0) {
+        <div class="chart-legend">
+          <span class="legend-dot teal"></span> <span class="small me-2">Revenue</span>
+          <span class="legend-dot black"></span> <span class="small">Orders</span>
+        </div>
+      }
+    </div>
+
+    @if (totalOrdersCount > 0 && maxMonthlyRevenue > 0) {
+      <div class="bar-chart-visual">
+        @for (item of monthlyStats; track item.month) {
+          <div class="chart-col" [title]="item.month + ': EGP ' + (item.revenue | number:'1.2-2') + ' (' + item.orderCount + ' orders)'">
+            <div class="bar-pair">
+              <div class="bar-teal" [style.height.px]="item.tealHeight"></div>
+              <div class="bar-black" [style.height.px]="item.blackHeight"></div>
+            </div>
+            <span>{{ item.month }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-chart-box">
+        <i class="bi bi-bar-chart-line fs-2 text-muted mb-2"></i>
+        <p class="fw-semibold mb-1 small text-dark">No monthly sales data</p>
+        <span class="text-muted extra-small">Monthly performance charts will visualize automatically as customer orders are placed.</span>
+      </div>
+    }
+  </div>
+
+  <div class="dash-card table-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="fs-6 fw-bold mb-0">Recent Activities & Orders</h3>
+      <a routerLink="/dashboard/orders" class="btn btn-sm btn-link text-decoration-none">
+        View All Orders <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer / Activity</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of recentOrders; track order._id) {
+            <tr>
+              <td class="font-monospace fw-semibold text-muted">
+                #{{ order._id.substring(order._id.length - 8) }}
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="activity-badge-icon">
+                    <i class="bi bi-bag-check"></i>
+                  </span>
+                  <div>
+                    <strong>{{ order.user?.firstName || 'Customer' }} {{ order.user?.lastName || '' }}</strong>
+                    <span class="small text-muted d-block">{{ order.totalItems || 1 }} items</span>
+                  </div>
+                </div>
+              </td>
+              <td class="fw-bold">EGP {{ order.total | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-pill" [class.completed]="order.orderStatus === 'delivered'" [class.pending]="order.orderStatus === 'placed' || order.orderStatus === 'preparing' || order.orderStatus === 'delivering'" [class.cancelled]="order.orderStatus === 'cancelled'">
+                  ● {{ order.orderStatus | titlecase }}
+                </span>
+              </td>
+              <td class="text-muted small">{{ order.createdAt | date:'shortDate' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                No customer orders placed yet. Orders will appear here once customers checkout.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,282 @@
+<div class="dash-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fs-5 fw-bold mb-1">Analytics & Store Performance</h2>
+      <p class="text-muted small mb-0">Live metrics computed from actual store catalog, customer orders, and reviews.</p>
+    </div>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="loadAnalyticsData()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Refresh Metrics
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark" role="status">
+        <span class="visually-hidden">Loading store analytics...</span>
+      </div>
+      <p class="mt-2 text-muted small">Computing live store metrics from database...</p>
+    </div>
+  } @else {
+
+    @if (!hasStoreData) {
+      <div class="empty-store-banner mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-info-circle-fill fs-3 text-primary"></i>
+          <div>
+            <h6 class="fw-bold mb-1">No Store Activity Recorded Yet</h6>
+            <p class="small text-muted mb-0">
+              There are currently no products or customer orders in the system. Add products to the catalog and checkout orders to reveal real-time conversion rates, fulfillment velocity, and sales analytics.
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-md-4">
+        <div class="metric-glass-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Average Order Value (AOV)</span>
+            <i class="bi bi-calculator text-muted"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            @if (totalOrdersCount > 0) {
+              EGP {{ averageOrderValue | number:'1.2-2' }}
+            } @else {
+              EGP 0.00
+            }
+          </h3>
+          <div class="metric-subtext">
+            @if (totalOrdersCount > 0) {
+              <span class="text-success small fw-semibold">
+                <i class="bi bi-graph-up-arrow me-1"></i> Based on {{ totalOrdersCount }} orders
+              </span>
+            } @else {
+              <span class="text-muted small">No orders placed yet to compute AOV</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="metric-glass-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Fulfillment Delivery Rate</span>
+            <i class="bi bi-truck text-muted"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            @if (totalOrdersCount > 0) {
+              {{ fulfillmentRate | number:'1.1-1' }}%
+            } @else {
+              0.0%
+            }
+          </h3>
+          <div class="metric-subtext">
+            @if (totalOrdersCount > 0) {
+              <span class="text-primary small fw-semibold">
+                <i class="bi bi-check2-circle me-1"></i> {{ deliveredOrdersCount }} of {{ totalOrdersCount }} delivered
+              </span>
+            } @else {
+              <span class="text-muted small">No orders to calculate fulfillment rate</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="metric-glass-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Repeat Customer Rate</span>
+            <i class="bi bi-people text-muted"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            @if (uniqueOrderingCustomersCount > 0) {
+              {{ repeatCustomerRate | number:'1.1-1' }}%
+            } @else {
+              0.0%
+            }
+          </h3>
+          <div class="metric-subtext">
+            @if (uniqueOrderingCustomersCount > 0) {
+              <span class="text-success small fw-semibold">
+                <i class="bi bi-arrow-repeat me-1"></i> {{ repeatCustomersCount }} repeat buyers ({{ uniqueOrderingCustomersCount }} total)
+              </span>
+            } @else {
+              <span class="text-muted small">No customer order history yet</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-glass-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Warehouse Stock Units</span>
+            <i class="bi bi-boxes text-muted"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            {{ totalStockUnits | number }} <span class="fs-6 fw-normal text-muted">units</span>
+          </h3>
+          <div class="metric-subtext">
+            @if (totalProductsCount > 0) {
+              <span class="text-muted small">
+                {{ inStockCount }} in stock · {{ lowStockCount }} low · {{ outOfStockCount }} out
+              </span>
+            } @else {
+              <span class="text-muted small">No catalog products listed yet</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-glass-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Customer Satisfaction</span>
+            <i class="bi bi-star-fill text-warning"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            @if (totalReviewsCount > 0) {
+              ★ {{ averageStoreRating | number:'1.1-1' }} <span class="fs-6 fw-normal text-muted">/ 5.0</span>
+            } @else {
+              <span class="fs-5 text-muted">No ratings</span>
+            }
+          </h3>
+          <div class="metric-subtext">
+            @if (totalReviewsCount > 0) {
+              <span class="text-muted small">
+                Calculated from {{ totalReviewsCount }} verified customer reviews
+              </span>
+            } @else {
+              <span class="text-muted small">No customer reviews submitted yet</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-12 col-lg-4">
+        <div class="metric-glass-card revenue-highlight">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-label">Gross Sales Revenue</span>
+            <i class="bi bi-wallet2 text-success"></i>
+          </div>
+          <h3 class="fs-4 fw-bold mt-2 mb-1">
+            EGP {{ totalRevenue | number:'1.2-2' }}
+          </h3>
+          <div class="metric-subtext">
+            @if (totalOrdersCount > 0) {
+              <span class="text-muted small">Total accumulated across {{ totalOrdersCount }} orders</span>
+            } @else {
+              <span class="text-muted small">No sales revenue recorded yet</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-glass-card mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-6 fw-bold mb-0">Order Fulfillment Pipeline</h4>
+        <span class="small text-muted">{{ totalOrdersCount }} Total Orders</span>
+      </div>
+
+      @if (totalOrdersCount > 0) {
+        <div class="pipeline-progress-bar mb-3">
+          @for (item of orderStatusPipeline; track item.status) {
+            @if (item.percentage > 0) {
+              <div
+                class="pipeline-segment {{ item.badgeClass }}"
+                [style.width.%]="item.percentage"
+                [title]="item.label + ': ' + item.count + ' (' + (item.percentage | number:'1.0-1') + '%)'">
+              </div>
+            }
+          }
+        </div>
+
+        <div class="row g-2">
+          @for (item of orderStatusPipeline; track item.status) {
+            <div class="col-6 col-md-2-4 col-sm-4">
+              <div class="pipeline-legend-item">
+                <span class="pipeline-dot {{ item.badgeClass }}"></span>
+                <div>
+                  <div class="small fw-semibold">{{ item.label }}</div>
+                  <div class="extra-small text-muted">{{ item.count }} ({{ item.percentage | number:'1.0-1' }}%)</div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-funnel fs-3 d-block mb-1"></i>
+          <p class="small mb-0">No customer orders placed yet to display the fulfillment pipeline.</p>
+        </div>
+      }
+    </div>
+
+    <div class="metric-glass-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="fs-6 fw-bold mb-0">Top Performing Products (Best Sellers)</h4>
+          <p class="extra-small text-muted mb-0">Ranked by total units sold across confirmed orders.</p>
+        </div>
+        <a routerLink="/dashboard/products" class="btn btn-sm btn-link text-decoration-none">
+          View Catalog <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      @if (topSellingProducts.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-borderless align-middle mb-0">
+            <thead class="text-muted extra-small text-uppercase">
+              <tr>
+                <th>Product</th>
+                <th class="text-center">Units Sold</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of topSellingProducts; track product.productId) {
+                <tr class="product-rank-row">
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      @if (product.mainPic) {
+                        <img
+                          [src]="product.mainPic.startsWith('http') ? product.mainPic : staticURL + product.mainPic"
+                          alt="{{ product.name }}"
+                          class="product-thumb-img" />
+                      } @else {
+                        <div class="product-thumb-placeholder">
+                          <i class="bi bi-image"></i>
+                        </div>
+                      }
+                      <span class="fw-semibold text-dark">{{ product.name }}</span>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-light text-dark fw-bold px-2 py-1">
+                      {{ product.unitsSold }} sold
+                    </span>
+                  </td>
+                  <td class="text-end text-muted small">
+                    EGP {{ product.price | number:'1.2-2' }}
+                  </td>
+                  <td class="text-end fw-bold text-dark">
+                    EGP {{ product.totalRevenue | number:'1.2-2' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-bag-x fs-3 d-block mb-1"></i>
+          <p class="small mb-0">No product sales recorded yet. Once customers place orders, top-selling items will rank here.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

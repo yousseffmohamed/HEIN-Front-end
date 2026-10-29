@@ -1,0 +1,37 @@
+<div class="dash-viewport">
+
+  <app-dashboard-sidebar></app-dashboard-sidebar>
+
+  <div class="dash-main-area">
+
+    <app-dashboard-topbar></app-dashboard-topbar>
+
+    <main class="dash-content-viewport">
+      <router-outlet></router-outlet>
+    </main>
+
+    <nav class="dash-bottom-pill-bar" aria-label="Quick Navigation">
+      <a routerLink="/dashboard/overview" routerLinkActive="active" class="bottom-pill-btn">
+        Overview
+      </a>
+      <a routerLink="/dashboard/products" routerLinkActive="active" class="bottom-pill-btn">
+        Manage
+      </a>
+      <a routerLink="/dashboard/deals" routerLinkActive="active" class="bottom-pill-btn">
+        Deals
+      </a>
+      <a routerLink="/dashboard/orders" routerLinkActive="active" class="bottom-pill-btn">
+        Orders
+      </a>
+      <a routerLink="/dashboard/customers" routerLinkActive="active" class="bottom-pill-btn">
+        Customers
+      </a>
+      <a routerLink="/dashboard/analytics" routerLinkActive="active" class="bottom-pill-btn">
+        Reports
+      </a>
+      <a routerLink="/dashboard/products" class="bottom-pill-btn add-btn" title="Add Product">
+        <i class="bi bi-plus-lg"></i>
+      </a>
+    </nav>
+  </div>
+</div>

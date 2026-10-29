@@ -1,0 +1,19 @@
+<header class="dash-top-bar">
+  <div class="top-user-info">
+    <div class="top-avatar">
+      <i class="bi bi-person-fill"></i>
+    </div>
+    <span>Welcome, {{ authService.currentUser()?.firstName || 'Admin' }}</span>
+  </div>
+
+  <div class="top-search-pill">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="Search orders, products, customers..." />
+  </div>
+
+  <div class="top-actions">
+    <button type="button" class="top-icon-pill" title="Notifications">
+      <i class="bi bi-bell"></i>
+    </button>
+  </div>
+</header>

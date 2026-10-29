@@ -1,0 +1,189 @@
+<main class="register-page">
+  <section class="register-container" aria-labelledby="register-title">
+
+    <a class="register-brand" routerLink="/home" aria-label="HeIn home">
+      <span class="register-brand-icon">
+        <i class="bi bi-bag-heart" aria-hidden="true"></i>
+      </span>
+      <span>HeIn</span>
+    </a>
+
+    <div class="register-heading">
+      <h1 id="register-title">Create your account.</h1>
+      <p>Join HeIn for a simpler, more thoughtful shopping experience.</p>
+    </div>
+
+    @if (successMessage) {
+      <div class="alert alert-success py-2 px-3 small rounded-3 mb-3">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        {{ successMessage }}
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="register-name-row">
+        <div class="register-field">
+          <label for="first-name">First name</label>
+          <input
+            type="text"
+            id="first-name"
+            name="firstName"
+            formControlName="firstName"
+            placeholder="First name"
+            autocomplete="given-name"
+            [class.input-invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+          />
+
+          @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+            @if (registerForm.get('firstName')?.errors?.['required']) {
+              <p class="msg">First name is required</p>
+            }
+            @if (registerForm.get('firstName')?.errors?.['minlength']) {
+              <p class="msg">First name must be at least 2 characters long</p>
+            }
+          }
+        </div>
+
+        <div class="register-field">
+          <label for="last-name">Last name</label>
+          <input
+            type="text"
+            id="last-name"
+            name="lastName"
+            formControlName="lastName"
+            placeholder="Last name"
+            autocomplete="family-name"
+            [class.input-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+          />
+
+          @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+            @if (registerForm.get('lastName')?.errors?.['required']) {
+              <p class="msg">Last name is required</p>
+            }
+            @if (registerForm.get('lastName')?.errors?.['minlength']) {
+              <p class="msg">Last name must be at least 2 characters long</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="register-field">
+        <label for="register-email">Email address</label>
+        <input
+          type="email"
+          id="register-email"
+          name="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          [class.input-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        />
+
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          @if (registerForm.get('email')?.errors?.['required']) {
+            <p class="msg">Email address is required</p>
+          }
+          @if (registerForm.get('email')?.errors?.['email']) {
+            <p class="msg">Please enter a valid email address</p>
+          }
+        }
+      </div>
+
+      <div class="register-field">
+        <label for="register-phone">Phone number</label>
+        <input
+          type="tel"
+          id="register-phone"
+          name="phone"
+          formControlName="phone"
+          placeholder="+20 100 000 0000"
+          autocomplete="tel"
+        />
+      </div>
+
+      <div class="register-field">
+        <label for="register-password">Password</label>
+        <input
+          type="password"
+          id="register-password"
+          name="password"
+          formControlName="password"
+          placeholder="Create a strong password"
+          autocomplete="new-password"
+          [class.input-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        />
+
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          @if (registerForm.get('password')?.errors?.['required']) {
+            <p class="msg">Password is required</p>
+          }
+          @if (registerForm.get('password')?.errors?.['strongPassword']) {
+            <p class="msg">Must be at least 8 characters and include uppercase, lowercase, number, and special character</p>
+          }
+        }
+      </div>
+
+      <div class="register-field">
+        <label for="confirm-password">Confirm password</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirmPassword"
+          formControlName="confirmPassword"
+          placeholder="Re-enter your password"
+          autocomplete="new-password"
+          [class.input-invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
+        />
+
+        @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+          @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+            <p class="msg">Please confirm your password</p>
+          }
+          @if (registerForm.get('confirmPassword')?.errors?.['matchPassword']) {
+            <p class="msg">Passwords do not match</p>
+          }
+        }
+      </div>
+
+      <div class="register-terms">
+        <label class="register-checkbox-label" for="accept-terms">
+          <input type="checkbox" id="accept-terms" name="acceptTerms" formControlName="acceptTerms" />
+          <span>
+            I agree to the Terms of Service and Privacy Policy.
+          </span>
+        </label>
+
+        @if (registerForm.get('acceptTerms')?.invalid && registerForm.get('acceptTerms')?.touched) {
+          <p class="msg">You must accept the terms to continue</p>
+        }
+      </div>
+
+      <button type="submit" class="register-submit" [disabled]="isLoading">
+        @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Creating Account...
+        } @else {
+          Create Account
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        }
+      </button>
+    </form>
+
+    <p class="register-login">
+      Already have an account?
+      <a routerLink="/login" class="register-text-link">Sign in</a>
+    </p>
+
+    <div class="register-footer">
+      <span>Simple shopping. Thoughtfully chosen.</span>
+    </div>
+  </section>
+</main>

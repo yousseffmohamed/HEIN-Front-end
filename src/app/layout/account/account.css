@@ -1,0 +1,113 @@
+.account-page {
+  background-color: var(--hein-bg);
+  min-height: calc(100vh - 150px);
+}
+
+.account-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--hein-muted);
+  margin-bottom: 4px;
+}
+
+.account-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--hein-text);
+  margin: 0;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--hein-accent);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-nav-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+}
+
+.nav-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--hein-text);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 160ms ease;
+  text-decoration: none;
+}
+
+.nav-tab-btn i {
+  font-size: 16px;
+  color: #6c757d;
+}
+
+.nav-tab-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--hein-accent);
+}
+
+.nav-tab-btn:hover i {
+  color: var(--hein-accent);
+}
+
+.nav-tab-btn.active {
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--hein-accent);
+  font-weight: 600;
+}
+
+.nav-tab-btn.active i {
+  color: var(--hein-accent);
+}
+
+.admin-link {
+  background: #fbf7ff;
+  color: #6741d9;
+}
+
+.admin-link:hover {
+  background: #f3ebff;
+  color: #5f3dc4;
+}
+
+.account-content-card {
+  padding: 32px;
+}
+
+.address-card {
+  background: #fafafd;
+  transition: all 180ms ease;
+}
+
+.address-card:hover {
+  border-color: #ced4da;
+  background: #ffffff;
+}
+
+.order-card {
+  background: #fafafd;
+  transition: all 180ms ease;
+}
+
+.order-card:hover {
+  border-color: #ced4da;
+  background: #ffffff;
+}

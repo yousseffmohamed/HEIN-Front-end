@@ -1,0 +1,287 @@
+<main class="account-page">
+  <div class="container py-5">
+
+    <div class="account-header mb-4">
+      <div>
+        <p class="account-eyebrow">CUSTOMER PORTAL</p>
+        <h1 class="account-title">My Account</h1>
+      </div>
+      <div class="account-user-badge">
+        <span class="user-pill">
+          <i class="bi bi-person-circle"></i>
+          {{ user?.firstName }} {{ user?.lastName }} ({{ user?.role | titlecase }})
+        </span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-12 col-md-3">
+        <div class="account-nav-card apple-card">
+          <button
+            type="button"
+            class="nav-tab-btn"
+            [class.active]="activeTab === 'profile'"
+            (click)="setTab('profile')"
+          >
+            <i class="bi bi-person"></i>
+            Profile & Security
+          </button>
+
+          <button
+            type="button"
+            class="nav-tab-btn"
+            [class.active]="activeTab === 'addresses'"
+            (click)="setTab('addresses')"
+          >
+            <i class="bi bi-geo-alt"></i>
+            Addresses ({{ addresses.length }})
+          </button>
+
+          <button
+            type="button"
+            class="nav-tab-btn"
+            [class.active]="activeTab === 'orders'"
+            (click)="setTab('orders')"
+          >
+            <i class="bi bi-box-seam"></i>
+            Orders & Tracking ({{ orders.length }})
+          </button>
+
+          @if (user?.role === 'admin') {
+            <a routerLink="/dashboard" class="nav-tab-btn admin-link">
+              <i class="bi bi-speedometer2"></i>
+              Admin Dashboard
+            </a>
+          }
+
+          <div class="mt-4 pt-3 border-top">
+            <button type="button" class="nav-tab-btn text-danger" (click)="authService.logout()">
+              <i class="bi bi-box-arrow-right"></i>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-9">
+
+        @if (activeTab === 'profile') {
+          <div class="account-content-card apple-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h2>Personal Information</h2>
+                <p class="text-muted small">Update your name and primary contact details.</p>
+              </div>
+            </div>
+
+            @if (profileSuccess) {
+              <div class="alert alert-success py-2 px-3 small rounded-3 mb-3">
+                <i class="bi bi-check-circle-fill me-1"></i> Profile updated successfully!
+              </div>
+            }
+
+            @if (profileError) {
+              <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ profileError }}
+              </div>
+            }
+
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">First Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="firstName"
+                    [class.input-invalid]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+                  />
+                  @if (profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched) {
+                    <p class="msg">First name is required</p>
+                  }
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">Last Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="lastName"
+                    [class.input-invalid]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+                  />
+                  @if (profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched) {
+                    <p class="msg">Last name is required</p>
+                  }
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">Email Address</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    [value]="user?.email"
+                    disabled
+                  />
+                  <small class="text-muted">Primary account email cannot be changed.</small>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">Phone Number</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    formControlName="phone"
+                    placeholder="+20 100 000 0000"
+                  />
+                </div>
+              </div>
+
+              <div class="mt-4 pt-2">
+                <button type="submit" class="apple-btn-primary" [disabled]="isSavingProfile">
+                  @if (isSavingProfile) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Saving...
+                  } @else {
+                    Save Changes
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        @if (activeTab === 'addresses') {
+          <div class="account-content-card apple-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h2>Saved Delivery Addresses</h2>
+                <p class="text-muted small">Manage the shipping destinations for your orders.</p>
+              </div>
+
+              <button type="button" class="apple-btn-primary btn-sm" (click)="showAddAddressModal = true">
+                <i class="bi bi-plus-lg"></i> Add Address
+              </button>
+            </div>
+
+            @if (showAddAddressModal) {
+              <div class="p-3 mb-4 rounded-3 border bg-light">
+                <h4 class="mb-3 fs-6 fw-bold">New Shipping Address</h4>
+                <form [formGroup]="addressForm" (ngSubmit)="submitAddress()">
+                  <div class="row g-2 mb-2">
+                    <div class="col-12 col-sm-6">
+                      <label class="form-label small">Address Title</label>
+                      <input type="text" class="form-control form-control-sm" placeholder="e.g. Home, Office" formControlName="title" />
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label class="form-label small">City</label>
+                      <input type="text" class="form-control form-control-sm" placeholder="e.g. Cairo, Giza" formControlName="city" />
+                    </div>
+                  </div>
+
+                  <div class="row g-2 mb-2">
+                    <div class="col-12 col-sm-8">
+                      <label class="form-label small">Street Name / Area</label>
+                      <input type="text" class="form-control form-control-sm" formControlName="street" />
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <label class="form-label small">Building</label>
+                      <input type="text" class="form-control form-control-sm" formControlName="building" />
+                    </div>
+                  </div>
+
+                  <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="apple-btn-primary btn-sm" [disabled]="addressForm.invalid || isAddingAddress">
+                      Save Address
+                    </button>
+                    <button type="button" class="apple-btn-outline btn-sm" (click)="showAddAddressModal = false">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            }
+
+            @if (addresses.length > 0) {
+              <div class="row g-3">
+                @for (addr of addresses; track addr._id || $index) {
+                  <div class="col-12 col-md-6">
+                    <div class="address-card p-3 rounded-3 border h-100 position-relative">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-secondary">{{ addr.title || 'Address' }}</span>
+                        <button type="button" class="btn btn-sm text-danger p-0 border-0" (click)="deleteAddress(addr._id)" title="Delete address">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                      <p class="mb-1 fw-semibold">{{ addr.street }}, Bldg {{ addr.building }}</p>
+                      <p class="mb-0 text-muted small">{{ addr.city }}, {{ addr.country }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-4 text-muted">
+                <i class="bi bi-geo-alt fs-2 d-block mb-2"></i>
+                <p>You have no saved addresses yet.</p>
+              </div>
+            }
+          </div>
+        }
+
+        @if (activeTab === 'orders') {
+          <div class="account-content-card apple-card">
+            <div class="mb-4">
+              <h2>My Order History</h2>
+              <p class="text-muted small">View previous purchases, quantities, and delivery status.</p>
+            </div>
+
+            @if (orders.length > 0) {
+              <div class="orders-list d-flex flex-column gap-3">
+                @for (order of orders; track order._id) {
+                  <div class="order-card p-3 rounded-3 border">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center pb-2 border-bottom mb-3">
+                      <div>
+                        <span class="fw-bold me-2">Order #{{ order._id.substring(order._id.length - 8) }}</span>
+                        <span class="text-muted small">{{ order.createdAt | date:'mediumDate' }}</span>
+                      </div>
+                      <div>
+                        <span class="badge" [class.bg-success]="order.orderStatus === 'delivered'" [class.bg-primary]="order.orderStatus === 'placed' || order.orderStatus === 'delivering'" [class.bg-warning]="order.orderStatus === 'preparing'" [class.bg-danger]="order.orderStatus === 'cancelled'">
+                          {{ order.orderStatus | titlecase }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="order-items-preview mb-3">
+                      @for (item of order.products; track item.product) {
+                        <div class="d-flex justify-content-between align-items-center py-1">
+                          <span class="small">{{ item.quantity }}x {{ item.productName }}</span>
+                          <span class="small fw-semibold">EGP {{ item.productPrice * item.quantity }}</span>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                      <span class="text-muted small">Total ({{ order.totalItems }} items):</span>
+                      <span class="fw-bold text-primary">EGP {{ order.total }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-5 text-muted">
+                <i class="bi bi-box-seam fs-1 d-block mb-2"></i>
+                <h3>No orders placed yet</h3>
+                <p>When you complete a purchase, your order history will appear here.</p>
+                <a routerLink="/products" class="apple-btn-primary mt-2">
+                  Explore Products
+                </a>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>

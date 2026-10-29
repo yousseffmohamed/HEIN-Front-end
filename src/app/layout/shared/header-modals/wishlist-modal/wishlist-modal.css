@@ -1,0 +1,226 @@
+:host {
+  --wishlist-text: #1d1d1f;
+  --wishlist-muted: #86868b;
+  --wishlist-border: #e8e8ed;
+  --wishlist-accent: #0071e3;
+  --wishlist-surface: #ffffff;
+
+  display: block;
+  position: absolute;
+  top: 100%;
+  right: -12px;
+  width: min(400px, calc(100vw - 32px));
+  padding-top: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--wishlist-text);
+  z-index: 1051;
+}
+
+.wishlist-panel {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  background: var(--wishlist-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.wishlist-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.wishlist-eyebrow {
+  margin: 0 0 4px;
+  color: var(--wishlist-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.wishlist-panel-header h2 {
+  margin: 0;
+  color: var(--wishlist-text);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.wishlist-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #f5f5f7;
+  color: #55555a;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.wishlist-close:hover {
+  background: #e9e9ed;
+  color: var(--wishlist-text);
+}
+
+.wishlist-items-list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wishlist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wishlist-border);
+}
+
+.item-img-wrapper {
+  width: 58px;
+  height: 58px;
+  border-radius: 10px;
+  background: #f5f5f7;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.item-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-details h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.item-details h4:hover {
+  color: var(--wishlist-accent);
+}
+
+.item-price {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wishlist-text);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-add-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--wishlist-accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--wishlist-accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.btn-add-cart:hover {
+  background: var(--wishlist-accent);
+  color: #fff;
+}
+
+.btn-remove {
+  border: none;
+  background: transparent;
+  color: #adb5bd;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 13px;
+  transition: color 150ms ease;
+}
+
+.btn-remove:hover {
+  color: #e03131;
+}
+
+.wishlist-panel-footer {
+  padding-top: 14px;
+  border-top: 1px solid var(--wishlist-border);
+}
+
+.btn-view-all {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--wishlist-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--wishlist-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 160ms ease;
+}
+
+.btn-view-all:hover {
+  background: #f5f5f7;
+}
+
+.wishlist-empty-state {
+  text-align: center;
+  padding: 24px 8px;
+}
+
+.empty-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #f5f5f7;
+  color: var(--wishlist-muted);
+  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.wishlist-empty-state h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.wishlist-empty-state p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--wishlist-muted);
+  line-height: 1.5;
+}

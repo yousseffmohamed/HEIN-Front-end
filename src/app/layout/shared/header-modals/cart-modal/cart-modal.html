@@ -1,0 +1,85 @@
+<div class="cart-panel" (click)="$event.stopPropagation()">
+
+  <div class="cart-panel-header">
+    <div>
+      <p class="cart-eyebrow">HEIN BAG</p>
+      <h2>Shopping Cart ({{ cartService.totalItems() }})</h2>
+    </div>
+
+    <button type="button" class="cart-close" (click)="onClose()" aria-label="Close cart">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  @if (cartService.items().length > 0) {
+
+    <div class="cart-items-list">
+      @for (item of cartService.items(); track item.product._id) {
+        <div class="cart-item">
+          <div class="item-img-wrapper" (click)="navigate('/products/' + item.product.slug)">
+            <img
+              [src]="staticURL + item.product.mainPic"
+              [alt]="item.product.name"
+              (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=140&q=80'"
+            />
+          </div>
+
+          <div class="item-details">
+            <h4 (click)="navigate('/products/' + item.product.slug)">{{ item.product.name }}</h4>
+            <p class="item-unit-price">EGP {{ item.product.price }}</p>
+
+            <div class="item-actions">
+              <div class="qty-stepper">
+                <button type="button" (click)="updateQty(item.product._id, item.quantity - 1)" aria-label="Decrease quantity">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <span>{{ item.quantity }}</span>
+                <button type="button" (click)="updateQty(item.product._id, item.quantity + 1)" aria-label="Increase quantity">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+
+              <button type="button" class="btn-remove" (click)="removeItem(item.product._id)" title="Remove item">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="item-total">
+            EGP {{ item.product.price * item.quantity }}
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="cart-panel-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span class="subtotal-amount">EGP {{ cartService.subtotal() }}</span>
+      </div>
+      <p class="shipping-note">Taxes and shipping calculated at checkout.</p>
+
+      <div class="cart-actions-row">
+        <button type="button" class="btn-view-cart" (click)="navigate('/cart')">
+          View Cart
+        </button>
+        <button type="button" class="btn-checkout" (click)="navigate('/checkout')">
+          Checkout <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  } @else {
+
+    <div class="cart-empty-state">
+      <div class="empty-icon-circle">
+        <i class="bi bi-bag"></i>
+      </div>
+      <h3>Your bag is empty</h3>
+      <p>Explore our curated essentials and add items to your bag.</p>
+
+      <button type="button" class="apple-btn-primary mt-3" (click)="navigate('/products')">
+        Shop All Products
+      </button>
+    </div>
+  }
+</div>

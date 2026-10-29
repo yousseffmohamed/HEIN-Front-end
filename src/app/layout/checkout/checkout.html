@@ -1,0 +1,225 @@
+<main class="checkout-page">
+  <div class="container py-5">
+    @if (orderSuccess && placedOrder) {
+
+      <div class="apple-card p-5 text-center my-4 mx-auto" style="max-width: 600px;">
+        <div class="success-icon-circle mx-auto mb-3">
+          <i class="bi bi-check-lg fs-1 text-success"></i>
+        </div>
+        <h1 class="fs-3 fw-bold mb-2">Order Confirmed!</h1>
+        <p class="text-muted mb-4">Thank you for shopping with HeIn. Your order reference is:</p>
+        <div class="order-id-box p-3 bg-light rounded-3 mb-4 fw-bold font-monospace">
+          #{{ placedOrder._id }}
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+          <a routerLink="/account/orders" class="apple-btn-primary">
+            View My Orders
+          </a>
+          <a routerLink="/products" class="apple-btn-outline">
+            Continue Shopping
+          </a>
+        </div>
+      </div>
+    } @else {
+
+      <div class="checkout-header mb-4">
+        <p class="checkout-eyebrow">FINAL STEP</p>
+        <h1 class="checkout-title">Express Checkout</h1>
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          {{ errorMessage }}
+        </div>
+      }
+
+      <div class="row g-4">
+
+        <div class="col-12 col-lg-7">
+          <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
+
+            <div class="apple-card p-4 mb-4">
+              <h2 class="fs-5 fw-bold mb-3">1. Shipping Address</h2>
+
+              @if (savedAddresses.length > 0) {
+                <div class="mb-3">
+                  <label class="form-label small text-muted">Select an Address</label>
+                  <select
+                    class="form-select form-select-sm"
+                    [value]="selectedSavedAddressId"
+                    (change)="onAddressSelectChange($any($event.target).value)"
+                  >
+                    @for (addr of savedAddresses; track addr._id) {
+                      <option [value]="addr._id">{{ addr.title || 'Address' }} — {{ addr.street }}, {{ addr.city }}</option>
+                    }
+                    <option value="new">+ Enter a new address</option>
+                  </select>
+                </div>
+              }
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">City / Governorates</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="e.g. Cairo"
+                    formControlName="city"
+                    [class.input-invalid]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched"
+                  />
+                  @if (checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched) {
+                    @if (checkoutForm.get('city')?.errors?.['required']) {
+                      <p class="msg">City is required</p>
+                    }
+                  }
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="form-label small fw-semibold">Country</label>
+                  <input type="text" class="form-control" formControlName="country" readonly />
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-sm-8">
+                  <label class="form-label small fw-semibold">Street Address / Area</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Street name, landmark..."
+                    formControlName="street"
+                    [class.input-invalid]="checkoutForm.get('street')?.invalid && checkoutForm.get('street')?.touched"
+                  />
+                  @if (checkoutForm.get('street')?.invalid && checkoutForm.get('street')?.touched) {
+                    @if (checkoutForm.get('street')?.errors?.['required']) {
+                      <p class="msg">Street address is required</p>
+                    }
+                  }
+                </div>
+
+                <div class="col-12 col-sm-4">
+                  <label class="form-label small fw-semibold">Building No.</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Bldg / Villa"
+                    formControlName="building"
+                    [class.input-invalid]="checkoutForm.get('building')?.invalid && checkoutForm.get('building')?.touched"
+                  />
+                  @if (checkoutForm.get('building')?.invalid && checkoutForm.get('building')?.touched) {
+                    @if (checkoutForm.get('building')?.errors?.['required']) {
+                      <p class="msg">Building is required</p>
+                    }
+                  }
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label small">Floor (optional)</label>
+                  <input type="text" class="form-control" formControlName="floor" />
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Apartment (optional)</label>
+                  <input type="text" class="form-control" formControlName="apartment" />
+                </div>
+              </div>
+            </div>
+
+            <div class="apple-card p-4 mb-4">
+              <h2 class="fs-5 fw-bold mb-3">2. Payment Method</h2>
+
+              <div class="d-flex flex-column gap-2">
+                <label class="payment-option-label">
+                  <input type="radio" value="cash" formControlName="paymentMethod" />
+                  <span class="payment-label-content">
+                    <i class="bi bi-cash-stack fs-5"></i>
+                    <div>
+                      <strong>Cash on Delivery</strong>
+                      <p class="mb-0 text-muted small">Pay in cash when your order arrives at your door.</p>
+                    </div>
+                  </span>
+                </label>
+
+                <label class="payment-option-label">
+                  <input type="radio" value="visa" formControlName="paymentMethod" />
+                  <span class="payment-label-content">
+                    <i class="bi bi-credit-card-2-front fs-5 text-primary"></i>
+                    <div>
+                      <strong>Credit / Debit Card (Visa, Mastercard)</strong>
+                      <p class="mb-0 text-muted small">Encrypted and verified processing.</p>
+                    </div>
+                  </span>
+                </label>
+
+                <label class="payment-option-label">
+                  <input type="radio" value="wallet" formControlName="paymentMethod" />
+                  <span class="payment-label-content">
+                    <i class="bi bi-phone fs-5 text-success"></i>
+                    <div>
+                      <strong>Mobile Smart Wallet</strong>
+                      <p class="mb-0 text-muted small">Vodafone Cash, InstaPay, Orange Money.</p>
+                    </div>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="apple-btn-primary w-100 py-3" [disabled]="isSubmitting">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Processing Order...
+              } @else {
+                Confirm Order (EGP {{ total }})
+                <i class="bi bi-arrow-right"></i>
+              }
+            </button>
+          </form>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="apple-card p-4">
+            <h3 class="fs-5 fw-bold mb-3">In Your Bag ({{ cartService.totalItems() }})</h3>
+
+            <div class="checkout-items-list mb-3 d-flex flex-column gap-2">
+              @for (item of cartService.items(); track item.product._id) {
+                <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      [src]="staticURL + item.product.mainPic"
+                      [alt]="item.product.name"
+                      class="checkout-item-thumb rounded-2"
+                      (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=100&q=80'"
+                    />
+                    <div>
+                      <h4 class="fs-6 mb-0">{{ item.product.name }}</h4>
+                      <span class="text-muted small">Qty: {{ item.quantity }}</span>
+                    </div>
+                  </div>
+                  <span class="fw-semibold">EGP {{ item.product.price * item.quantity }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="d-flex justify-content-between py-2 small text-muted">
+              <span>Subtotal</span>
+              <span class="fw-semibold text-dark">EGP {{ subtotal }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between py-2 small text-muted">
+              <span>Standard Shipping</span>
+              <span class="fw-semibold text-dark">EGP {{ shippingCost }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between py-3 border-top mt-2 fs-5 fw-bold">
+              <span>Total</span>
+              <span class="text-primary">EGP {{ total }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</main>

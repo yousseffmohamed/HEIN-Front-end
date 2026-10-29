@@ -1,0 +1,81 @@
+.dash-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
+}
+
+.dash-action-btn {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 160ms ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dark-btn {
+  background: #1d1d1f;
+  color: #ffffff;
+}
+
+.dark-btn:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.dash-table th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dash-table td {
+  padding: 12px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.dash-product-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f5f5f7;
+}
+
+.dash-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 16px;
+}
+
+.dash-modal-window {
+  background: #ffffff;
+  border-radius: 20px;
+  width: min(560px, 100%);
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+}

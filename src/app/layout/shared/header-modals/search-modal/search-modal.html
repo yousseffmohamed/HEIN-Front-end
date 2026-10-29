@@ -1,0 +1,145 @@
+<div class="search-panel" [class.has-query]="hasQuery" (click)="$event.stopPropagation()">
+
+  <div class="search-panel-header">
+    <div>
+      <p class="search-eyebrow">HEIN SEARCH</p>
+      <h2>What are you looking for?</h2>
+    </div>
+
+    <button type="button" class="search-close" (click)="onClose()" aria-label="Close search" title="Close search">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <form class="search-form" (submit)="$event.preventDefault(); onSubmit()">
+    <i class="bi bi-search search-input-icon" aria-hidden="true"></i>
+
+    <input
+      type="search"
+      name="q"
+      class="search-input"
+      placeholder="Search products, brands, categories..."
+      aria-label="Search products"
+      autocomplete="off"
+      [formControl]="searchControl"
+    />
+
+    <button type="submit" class="search-submit">Search</button>
+  </form>
+
+  <div class="search-default-content">
+    <div class="search-section-heading">
+      <h3>Popular searches</h3>
+    </div>
+
+    <div class="popular-searches">
+      <button type="button" class="search-chip btn p-0" (click)="searchControl.setValue('Headphones'); onSubmit()">
+        <i class="bi bi-arrow-up-left" aria-hidden="true"></i>
+        Headphones
+      </button>
+
+      <button type="button" class="search-chip btn p-0" (click)="searchControl.setValue('Watch'); onSubmit()">
+        <i class="bi bi-arrow-up-left" aria-hidden="true"></i>
+        Watches
+      </button>
+
+      <button type="button" class="search-chip btn p-0" (click)="searchControl.setValue('Hoodie'); onSubmit()">
+        <i class="bi bi-arrow-up-left" aria-hidden="true"></i>
+        Hoodies
+      </button>
+
+      <button type="button" class="search-chip btn p-0" (click)="searchControl.setValue('Apple'); onSubmit()">
+        <i class="bi bi-arrow-up-left" aria-hidden="true"></i>
+        Apple
+      </button>
+    </div>
+
+    <div class="search-section-heading category-heading">
+      <h3>Explore categories</h3>
+      <a routerLink="/categories" (click)="onClose()" class="search-view-all">
+        View all <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="search-category-links">
+      <a routerLink="/products/category/electronics" (click)="onClose()">
+        <span class="category-icon">
+          <i class="bi bi-laptop" aria-hidden="true"></i>
+        </span>
+        <span>Electronics</span>
+        <i class="bi bi-arrow-up-right category-arrow" aria-hidden="true"></i>
+      </a>
+
+      <a routerLink="/products/category/clothes" (click)="onClose()">
+        <span class="category-icon">
+          <i class="bi bi-tag" aria-hidden="true"></i>
+        </span>
+        <span>Clothing</span>
+        <i class="bi bi-arrow-up-right category-arrow" aria-hidden="true"></i>
+      </a>
+
+      <a routerLink="/products/category/accessories" (click)="onClose()">
+        <span class="category-icon">
+          <i class="bi bi-watch" aria-hidden="true"></i>
+        </span>
+        <span>Accessories</span>
+        <i class="bi bi-arrow-up-right category-arrow" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="search-results">
+    <div class="search-section-heading">
+      <h3>Search results</h3>
+      <span class="search-result-count">{{ filteredProducts.length }} products</span>
+    </div>
+
+    @if (filteredProducts.length > 0) {
+      <div class="search-product-list">
+        @for (product of filteredProducts.slice(0, 5); track product._id) {
+          <a class="search-product" (click)="onSelectProduct(product.slug)">
+            <div class="search-product-image">
+              <img
+                [src]="staticURL + product.mainPic"
+                [alt]="product.name"
+                (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=180&q=80'"
+              />
+            </div>
+
+            <div class="search-product-info">
+              <span class="search-product-category">{{ product.brand || (product.category ? product.category[0] : 'Product') }}</span>
+              <h4>{{ product.name }}</h4>
+              <div class="search-product-meta">
+                <span class="search-product-price">EGP {{ product.price }}</span>
+                <span class="search-product-rating">
+                  <i class="bi bi-star-fill text-warning" aria-hidden="true"></i> 4.8
+                </span>
+              </div>
+            </div>
+
+            <i class="bi bi-arrow-up-right search-product-arrow" aria-hidden="true"></i>
+          </a>
+        }
+      </div>
+
+      <button type="button" class="search-all-results" (click)="onSubmit()">
+        View all {{ filteredProducts.length }} results <i class="bi bi-arrow-right" aria-hidden="true"></i>
+      </button>
+    } @else {
+      <div class="search-empty-state">
+        <i class="bi bi-search"></i>
+        <h3>No products found</h3>
+        <p>We couldn't find any items matching "{{ searchControl.value }}". Try another keyword or explore all categories.</p>
+      </div>
+    }
+  </div>
+
+  <div class="search-panel-footer">
+    <span>
+      <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+      Find your next favorite
+    </span>
+
+    <span class="search-shortcut"> <kbd>ESC</kbd> to close </span>
+  </div>
+</div>

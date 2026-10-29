@@ -1,0 +1,165 @@
+<header class="store-header">
+  <nav class="navbar navbar-expand-xl store-nav">
+    <div class="container-fluid store-nav-container">
+
+      <a class="navbar-brand store-logo" routerLink="/home" aria-label="HeIn home">
+        <span class="store-logo-icon">
+          <i class="bi bi-bag-heart" aria-hidden="true"></i>
+        </span>
+        <span class="store-logo-text">HeIn</span>
+      </a>
+
+      <button
+        class="navbar-toggler store-menu-toggle"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#storeNavigation"
+        aria-controls="storeNavigation"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="storeNavigation">
+
+        <ul class="navbar-nav store-nav-links">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Shop All</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products" [queryParams]="{category: 'new'}" routerLinkActive="active">New Arrivals</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/categories" routerLinkActive="active">Categories</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/department/men" routerLinkActive="active">Men</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/department/women" routerLinkActive="active">Women</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/department/kids" routerLinkActive="active">Kids</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/category/clothes" routerLinkActive="active">Clothing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/category/electronics" routerLinkActive="active">Electronics</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products/category/accessories" routerLinkActive="active">Accessories</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link store-deals-link" routerLink="/deals" routerLinkActive="active">Deals</a>
+          </li>
+        </ul>
+
+        <div class="store-nav-actions">
+
+          <div
+            class="header-action-wrapper"
+            (mouseenter)="onSearchHover()"
+            (mouseleave)="onSearchLeave()"
+          >
+            <button
+              type="button"
+              class="store-icon-link"
+              aria-label="Search products"
+              title="Search"
+              (click)="onSearchClick($event)"
+            >
+              <i class="bi bi-search" aria-hidden="true"></i>
+              <span class="store-action-label">Search</span>
+            </button>
+
+            @if (isSearchOpen) {
+              <app-search-modal (close)="closeAll()"></app-search-modal>
+            }
+          </div>
+
+          <div class="header-action-wrapper">
+            <button
+              type="button"
+              class="store-icon-link"
+              aria-label="My wishlist"
+              title="Wishlist"
+              (click)="toggleWishlist($event)"
+            >
+              <span class="store-cart-icon">
+                <i class="bi bi-heart" aria-hidden="true"></i>
+                @if (wishlistService.totalItems() > 0) {
+                  <span class="cart-count">{{ wishlistService.totalItems() }}</span>
+                }
+              </span>
+              <span class="store-action-label">Wishlist</span>
+            </button>
+
+            @if (isWishlistOpen) {
+              <app-wishlist-modal (close)="closeAll()"></app-wishlist-modal>
+            }
+          </div>
+
+          <div class="header-action-wrapper">
+            <button
+              type="button"
+              class="store-icon-link"
+              aria-label="My account"
+              title="Account"
+              (click)="toggleAccount($event)"
+            >
+              <i class="bi bi-person" aria-hidden="true"></i>
+              <span class="store-action-label">
+                @if (authService.isLoggedIn()) {
+                  {{ authService.currentUser()?.firstName || 'Account' }}
+                } @else {
+                  Account
+                }
+              </span>
+            </button>
+
+            @if (isAccountOpen) {
+              <app-account-modal (close)="closeAll()"></app-account-modal>
+            }
+          </div>
+
+          <div class="header-action-wrapper">
+            <button
+              type="button"
+              class="store-icon-link store-cart-link"
+              aria-label="Shopping cart"
+              title="Shopping cart"
+              (click)="toggleCart($event)"
+            >
+              <span class="store-cart-icon">
+                <i class="bi bi-bag" aria-hidden="true"></i>
+                @if (cartService.totalItems() > 0) {
+                  <span class="cart-count">{{ cartService.totalItems() }}</span>
+                }
+              </span>
+              <span class="store-action-label">Cart</span>
+            </button>
+
+            @if (isCartOpen) {
+              <app-cart-modal (close)="closeAll()"></app-cart-modal>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

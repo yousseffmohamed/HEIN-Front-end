@@ -1,0 +1,203 @@
+<main class="products-page">
+
+  <section class="products-intro">
+    <div class="products-container">
+      <p class="products-eyebrow">THE HEIN COLLECTION</p>
+
+      <div class="products-intro-heading">
+        <h1 class="products-title">
+          @if (currentDepartment) {
+            {{ currentDepartment | titlecase }} Collection
+          } @else if (currentCategory) {
+            {{ currentCategory | titlecase }} Collection
+          } @else {
+            Find your thing.
+          }
+        </h1>
+        <p class="products-lead">Thoughtfully designed essentials crafted for longevity and ease.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="products-controls-section">
+    <div class="products-container">
+
+      <form class="products-search" role="search" [formGroup]="searchForm" (submit)="$event.preventDefault()">
+        <i class="bi bi-search" aria-hidden="true"></i>
+
+        <label class="visually-hidden" for="product-search"> Search products </label>
+
+        <input
+          type="search"
+          id="product-search"
+          name="search"
+          placeholder="Search by name, brand, or description..."
+          formControlName="searchFilter"
+        />
+      </form>
+
+      <form [formGroup]="filtersForm">
+        <div class="products-filter-panel">
+          <div class="filter-field filter-category">
+            <label for="product-category">Category</label>
+
+            <select id="product-category" name="category" formControlName="categoryFilter">
+              <option value="">All Categories</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothes">Clothing</option>
+              <option value="accessories">Accessories</option>
+              <option value="smartphones">Smartphones</option>
+              <option value="computers">Computers</option>
+              <option value="audio">Audio</option>
+            </select>
+          </div>
+
+          <div class="filter-field filter-price">
+            <label>Price range (EGP)</label>
+
+            <div class="price-inputs">
+              <div class="price-input-wrapper">
+                <span>EGP</span>
+                <input
+                  type="number"
+                  name="minPrice"
+                  placeholder="Min"
+                  min="0"
+                  aria-label="Minimum price in Egyptian pounds"
+                  formControlName="minPriceFilter"
+                />
+              </div>
+
+              <span class="price-range-separator">–</span>
+
+              <div class="price-input-wrapper">
+                <span>EGP</span>
+                <input
+                  type="number"
+                  name="maxPrice"
+                  placeholder="Max"
+                  min="0"
+                  aria-label="Maximum price in Egyptian pounds"
+                  formControlName="maxPriceFilter"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-field filter-sort">
+            <label for="product-sort">Sort by</label>
+
+            <select id="product-sort" name="sort" formControlName="sortFilter">
+              <option value="featured">Featured</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name">Name: A to Z</option>
+            </select>
+          </div>
+
+          <button type="button" class="clear-filters btn p-0" (click)="clearFilters()">
+            <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+            Clear filters
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="products-results-section">
+    <div class="products-container">
+      <div class="products-results-header">
+        <div>
+          <h2 class="results-title">Products</h2>
+          <p class="results-count">
+            Showing {{ paginatedProducts.length }} of {{ totalProducts }} products
+          </p>
+        </div>
+
+        <p class="results-view-label">
+          <i class="bi bi-grid" aria-hidden="true"></i>
+          Grid View
+        </p>
+      </div>
+
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading products...</span>
+          </div>
+          <p class="mt-3 text-muted">Retrieving catalog from HeIn servers...</p>
+        </div>
+      } @else if (errorMessage) {
+
+        <div class="alert alert-warning my-4 p-4 text-center rounded-3">
+          <i class="bi bi-exclamation-triangle fs-3 text-warning d-block mb-2"></i>
+          <h4>Unable to Load Products</h4>
+          <p class="mb-3 text-muted">{{ errorMessage }}</p>
+          <button type="button" class="apple-btn-outline" (click)="loadAllProducts()">
+            <i class="bi bi-arrow-repeat"></i> Retry
+          </button>
+        </div>
+      } @else if (paginatedProducts.length > 0) {
+
+        <div class="products-grid">
+          @for (product of paginatedProducts; track product._id) {
+            <app-product-card [product]="product"></app-product-card>
+          }
+        </div>
+
+        @if (totalPages > 1) {
+          <nav class="products-pagination" aria-label="Product pages">
+            <button
+              type="button"
+              class="pagination-arrow"
+              [disabled]="currentPage === 1"
+              (click)="goToPage(currentPage - 1)"
+              aria-label="Previous page"
+            >
+              <i class="bi bi-arrow-left" aria-hidden="true"></i>
+              <span>Previous</span>
+            </button>
+
+            <div class="pagination-pages">
+              @for (p of pages; track p) {
+                <button
+                  type="button"
+                  class="pagination-page"
+                  [class.active]="currentPage === p"
+                  (click)="goToPage(p)"
+                >
+                  {{ p }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-arrow"
+              [disabled]="currentPage === totalPages"
+              (click)="goToPage(currentPage + 1)"
+              aria-label="Next page"
+            >
+              <span>Next</span>
+              <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
+          </nav>
+
+          <p class="pagination-note text-center mt-2">Showing page {{ currentPage }} of {{ totalPages }}</p>
+        }
+      } @else {
+
+        <div class="empty-products-state text-center py-5">
+          <div class="empty-icon-circle mx-auto mb-3">
+            <i class="bi bi-inbox fs-2 text-muted"></i>
+          </div>
+          <h3>No matching products found</h3>
+          <p class="text-muted">Try adjusting your filters or search keywords.</p>
+          <button type="button" class="apple-btn-primary mt-2" (click)="clearFilters()">
+            Reset All Filters
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+</main>

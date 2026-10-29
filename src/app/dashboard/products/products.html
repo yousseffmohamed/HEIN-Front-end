@@ -1,0 +1,215 @@
+<div class="dash-card">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fs-5 fw-bold mb-1">Product Inventory ({{ products.length }})</h2>
+      <p class="text-muted small mb-0">Manage catalog items, pricing, inventory stock, and assets.</p>
+    </div>
+
+    <button type="button" class="dash-action-btn dark-btn" (click)="openAddProductModal()">
+      <i class="bi bi-plus-lg me-1"></i> Add Product
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger d-flex align-items-center justify-content-between p-3 rounded-4 mb-4">
+      <div>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadProducts()">
+        <i class="bi bi-arrow-clockwise me-1"></i> Retry
+      </button>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark spinner-border-sm" role="status"></div>
+      <p class="small text-muted mt-2">Loading products catalog...</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prod of products; track prod._id) {
+            <tr>
+              <td>
+                <img
+                  [src]="staticURL + prod.mainPic"
+                  [alt]="prod.name"
+                  class="dash-product-thumb"
+                  (error)="$any($event.target).src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=100&q=80'"
+                />
+              </td>
+              <td>
+                <strong>{{ prod.name }}</strong>
+                <span class="small text-muted d-block">{{ prod.brand }}</span>
+              </td>
+              <td>{{ prod.category.join(', ') }}</td>
+              <td><span class="badge bg-light text-dark">{{ prod.department | titlecase }}</span></td>
+              <td class="fw-bold">EGP {{ prod.price }}</td>
+              <td>
+                @if (prod.stock === 0) {
+                  <span class="badge bg-danger">Out of Stock</span>
+                } @else if (prod.stock <= 5) {
+                  <span class="badge bg-warning text-dark">{{ prod.stock }} Low Stock</span>
+                } @else {
+                  <span class="badge bg-success">{{ prod.stock }} In Stock</span>
+                }
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  <button type="button" class="btn btn-sm btn-light" (click)="openEditProductModal(prod)" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-light text-danger" (click)="deleteProduct(prod._id)" title="Delete">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <i class="bi bi-box-seam fs-1 d-block mb-2 text-muted"></i>
+                <p class="mb-2 fw-semibold">No products in inventory yet</p>
+                <button type="button" class="dash-action-btn dark-btn btn-sm" (click)="openAddProductModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Add Your First Product
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (showProductModal) {
+  <div class="dash-modal-backdrop" (click)="closeProductModal()">
+    <div class="dash-modal-window" (click)="$event.stopPropagation()">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fs-5 fw-bold mb-0">{{ productModalTitle }}</h3>
+        <button type="button" class="btn-close" (click)="closeProductModal()"></button>
+      </div>
+
+      <form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+        <div class="row g-2 mb-2">
+          <div class="col-12 col-sm-8">
+            <label class="form-label small fw-semibold">Product Name *</label>
+            <input type="text" class="form-control form-control-sm" formControlName="name" placeholder="e.g. Minimal Leather Watch" />
+          </div>
+          <div class="col-12 col-sm-4">
+            <label class="form-label small fw-semibold">Brand *</label>
+            <input type="text" class="form-control form-control-sm" formControlName="brand" placeholder="e.g. HeIn Collection" />
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-6 col-sm-4">
+            <label class="form-label small fw-semibold">Price (EGP) *</label>
+            <input type="number" class="form-control form-control-sm" formControlName="price" placeholder="100" />
+          </div>
+          <div class="col-6 col-sm-4">
+            <label class="form-label small fw-semibold">Inventory Stock *</label>
+            <input type="number" class="form-control form-control-sm" formControlName="stock" placeholder="10" />
+          </div>
+          <div class="col-12 col-sm-4">
+            <label class="form-label small fw-semibold">Slug (URL identifier) *</label>
+            <input type="text" class="form-control form-control-sm" formControlName="slug" placeholder="e.g. minimal-watch" />
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Category *</label>
+            <select class="form-select form-select-sm" formControlName="category">
+              <option value="electronics">Electronics</option>
+              <option value="clothes">Clothing</option>
+              <option value="accessories">Accessories</option>
+              <option value="smartphones">Smartphones</option>
+              <option value="computers">Computers</option>
+              <option value="audio">Audio</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Department *</label>
+            <select class="form-select form-select-sm" formControlName="department">
+              <option value="men">Men</option>
+              <option value="women">Women</option>
+              <option value="kids">Kids</option>
+              <option value="unisex">Unisex</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Description *</label>
+          <textarea class="form-control form-control-sm" rows="2" formControlName="description" placeholder="Product details, materials, specs..."></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">
+            Main Product Image * (PNG, JPG)
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onMainPicSelected($event)" accept="image/png, image/jpeg, image/jpg" />
+          @if (mainPicPreview) {
+            <div class="mt-2 d-flex align-items-center gap-2">
+              <img [src]="mainPicPreview" alt="Main Preview" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" />
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeMainPic()">
+                <i class="bi bi-trash me-1"></i> Remove
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">
+            Additional Product Gallery Images (Optional)
+          </label>
+          <input type="file" class="form-control form-control-sm" (change)="onAdditionalPicsSelected($event)" accept="image/png, image/jpeg, image/jpg" multiple />
+          @if (additionalPreviews.length > 0) {
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              @for (preview of additionalPreviews; track $index) {
+                <div class="position-relative d-inline-block">
+                  <img [src]="preview" alt="Gallery Preview" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-danger position-absolute top-0 end-0 p-0 rounded-circle"
+                    style="width: 18px; height: 18px; font-size: 10px; line-height: 1;"
+                    (click)="removeAdditionalPic($index)"
+                    title="Remove"
+                  >
+                    &times;
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+          <button type="button" class="btn btn-sm btn-light" (click)="closeProductModal()" [disabled]="isSaving">Cancel</button>
+          <button type="submit" class="apple-btn-primary btn-sm" [disabled]="productForm.invalid || isSaving">
+            @if (isSaving) {
+              <span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...
+            } @else {
+              Save Product
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

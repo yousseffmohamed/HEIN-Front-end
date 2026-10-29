@@ -1,0 +1,67 @@
+<div class="dash-card">
+  <div class="mb-4">
+    <h2 class="fs-5 fw-bold mb-1">Customer Orders ({{ orders.length }})</h2>
+    <p class="text-muted small mb-0">Update delivery status and review customer line items.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark spinner-border-sm" role="status"></div>
+      <p class="small text-muted mt-2">Loading orders...</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Order Ref</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders; track order._id) {
+            <tr>
+              <td class="font-monospace text-muted">#{{ order._id.substring(order._id.length - 8) }}</td>
+              <td>
+                <strong>{{ order.user?.firstName || 'Guest' }} {{ order.user?.lastName || '' }}</strong>
+                <span class="small text-muted d-block">{{ order.user?.email }}</span>
+              </td>
+              <td>
+                <div class="small">
+                  @for (p of order.products; track p.product) {
+                    <div>{{ p.quantity }}x {{ p.productName }}</div>
+                  }
+                </div>
+              </td>
+              <td class="fw-bold text-primary">EGP {{ order.total }}</td>
+              <td>
+                <select
+                  class="form-select form-select-sm"
+                  [value]="order.orderStatus"
+                  (change)="updateOrderStatus(order._id, $any($event.target).value)"
+                >
+                  <option value="placed">Placed</option>
+                  <option value="preparing">Preparing</option>
+                  <option value="delivering">Delivering</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </td>
+              <td>
+                <span class="small text-muted">{{ order.createdAt | date:'short' }}</span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No orders placed yet.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

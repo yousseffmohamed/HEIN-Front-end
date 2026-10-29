@@ -1,0 +1,394 @@
+.register-page {
+  --register-bg: #ffffff;
+  --register-text: #1d1d1f;
+  --register-secondary: #6e6e73;
+  --register-border: #d2d2d7;
+  --register-border-light: #e8e8ed;
+  --register-accent: #0071e3;
+  --register-accent-hover: #0077ed;
+  --register-surface: #f5f5f7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 48px 24px;
+  background-color: var(--register-bg);
+  color: var(--register-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+}
+
+.register-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: fit-content;
+  margin: 0 auto 36px;
+  color: var(--register-text);
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.register-brand:hover {
+  color: var(--register-text);
+  opacity: 0.75;
+}
+
+.register-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.register-heading {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.register-heading h1 {
+  margin: 0 0 10px;
+  color: var(--register-text);
+  font-size: clamp(29px, 5vw, 34px);
+  font-weight: 600;
+  letter-spacing: -1.3px;
+  line-height: 1.2;
+}
+
+.register-heading p {
+  max-width: 350px;
+  margin: 0 auto;
+  color: var(--register-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.register-name-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.register-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.register-field > label {
+  color: var(--register-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.register-field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid var(--register-border);
+  border-radius: 9px;
+  outline: none;
+  background-color: #ffffff;
+  color: var(--register-text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.register-field input::placeholder {
+  color: #8e8e93;
+  opacity: 1;
+}
+
+.register-field input:hover {
+  border-color: #a1a1a6;
+}
+
+.register-field input:focus {
+  border-color: var(--register-accent);
+  box-shadow: 0 0 0 3px rgb(0 113 227 / 12%);
+}
+
+.register-field-hint {
+  color: var(--register-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.register-terms {
+  margin-top: -2px;
+}
+
+.register-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: var(--register-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.register-checkbox-label input {
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+  margin: 3px 0 0;
+  accent-color: var(--register-accent);
+  cursor: pointer;
+}
+
+.register-checkbox-label > span {
+  min-width: 0;
+}
+
+.register-text-link {
+  color: var(--register-accent);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.register-text-link:hover {
+  color: var(--register-accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.register-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 49px;
+  margin-top: 1px;
+  padding: 12px 18px;
+  border: 1px solid var(--register-accent);
+  border-radius: 10px;
+  background-color: var(--register-accent);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.register-submit i {
+  font-size: 16px;
+  transition: transform 180ms ease;
+}
+
+.register-submit:hover {
+  border-color: var(--register-accent-hover);
+  background-color: var(--register-accent-hover);
+}
+
+.register-submit:hover i {
+  transform: translateX(3px);
+}
+
+.register-submit:active {
+  transform: scale(0.99);
+}
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 23px;
+  color: #8e8e93;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--register-border-light);
+}
+
+.register-divider span {
+  white-space: nowrap;
+}
+
+.google-register-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 49px;
+  margin-top: 18px;
+  padding: 12px 18px;
+  border: 1px solid var(--register-border);
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: var(--register-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.google-register-button:hover {
+  border-color: #a1a1a6;
+  background-color: var(--register-surface);
+}
+
+.google-register-button:active {
+  background-color: #eeeeef;
+}
+
+.google-logo {
+  display: block;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.register-login {
+  margin: 25px 0 0;
+  color: var(--register-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.register-login .register-text-link {
+  margin-left: 3px;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.register-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid var(--register-border-light);
+  color: #8e8e93;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.register-page a:focus-visible,
+.register-page button:focus-visible,
+.register-page input:focus-visible {
+  outline: 2px solid var(--register-accent);
+  outline-offset: 3px;
+}
+
+.register-field input:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 575.98px) {
+  .register-page {
+    align-items: flex-start;
+    padding: 36px 20px 28px;
+  }
+
+  .register-container {
+    max-width: 420px;
+  }
+
+  .register-brand {
+    margin-bottom: 32px;
+    font-size: 25px;
+  }
+
+  .register-brand-icon {
+    font-size: 23px;
+  }
+
+  .register-heading {
+    margin-bottom: 25px;
+  }
+
+  .register-heading h1 {
+    font-size: 30px;
+  }
+
+  .register-form {
+    gap: 18px;
+  }
+
+  .register-name-row {
+    gap: 12px;
+  }
+
+  .register-field input {
+    min-height: 47px;
+    padding: 0 11px;
+    font-size: 13px;
+  }
+
+  .register-footer {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 360px) {
+  .register-page {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .register-name-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-brand,
+  .register-text-link,
+  .register-field input,
+  .register-submit,
+  .register-submit i,
+  .google-register-button {
+    transition: none;
+  }
+}
